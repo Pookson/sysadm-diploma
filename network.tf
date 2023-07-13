@@ -1,19 +1,56 @@
+/*
+resource "yandex_compute_instance" "bastion-vm" {
+  name = "bastion-vm"
+  zone = "ru-central1-c"
+
+  resources {
+    core_fraction = 20
+    cores  = 4
+    memory = 4
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8tf1sepeiku6d37l4l"
+      size = 10
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-2.id
+    nat       = true
+  }
+  
+  metadata = {
+    user-data = "${file("./meta_bastion.yml")}"
+  }
+
+}
+*/
+
 resource "yandex_vpc_network" "network-1" {
-  name = "network1"
+  name = "network-1"
 }
 
 resource "yandex_vpc_subnet" "subnet-1" {
-  name           = "subnet1"
+  name           = "subnet-1"
   zone           = "ru-central1-a"
   network_id     = "${yandex_vpc_network.network-1.id}"
   v4_cidr_blocks = ["192.168.10.0/24"]
 }
 
 resource "yandex_vpc_subnet" "subnet-2" {
-  name           = "subnet2"
+  name           = "subnet-2"
   zone           = "ru-central1-b"
   network_id     = "${yandex_vpc_network.network-1.id}"
   v4_cidr_blocks = ["192.168.20.0/24"]
+}
+
+resource "yandex_vpc_subnet" "subnet-3" {
+  name           = "subnet-3"
+  zone           = "ru-central1-c"
+  network_id     = "${yandex_vpc_network.network-1.id}"
+  v4_cidr_blocks = ["192.168.30.0/24"]
 }
 
 resource "yandex_alb_target_group" "target-group" {
