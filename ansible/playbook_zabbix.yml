@@ -3,10 +3,42 @@
   hosts: zabbix
   become: true
   become_method: sudo
-  
-  vars_files:
-    - vars.yml
   tasks:
+    - name: Stop Apache service
+      service:
+        name: apache2
+        state: stopped
+      ignore_errors: true
+
+    - name: Disable Apache service
+      service:
+        name: apache2
+        enabled: no
+      ignore_errors: true
+
+    - name: Remove Apache packages
+      apt:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - apache2
+        - apache2-utils
+        - apache2-bin
+      ignore_errors: true
+
+    - name: Remove Apache configuration files
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /etc/apache2
+        - /etc/apache2.conf
+        - /etc/apache2/sites-available
+        - /etc/apache2/sites-enabled
+        - /etc/apache2/mods-available
+        - /etc/apache2/mods-enabled
+      ignore_errors: true
+
     - name: Downloading zabbix-release pkg
       get_url:
         url: https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-4+ubuntu22.04_all.deb
@@ -59,30 +91,43 @@
         validate: 'visudo -cf %s'
         insertafter: '^# User privilege specification'
     
-    - name: Create initial database
-      shell: |
-        sudo -i -u postgres createuser --pwprompt zabbix
-        sudo -i -u postgres createdb -O zabbix zabbix
+    - name: Add zabbix user to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        line: 'zabbix    ALL=(ALL:ALL) ALL'
+        validate: 'visudo -cf %s'
+        insertafter: '^# User privilege specification'        
+    
+    - name: Install acl
+      apt:
+        name: acl
+        state: present    
+    
+    - name: Configure PostgreSQL
       become_user: postgres
+      become: true
+      shell: |
+        psql -c "CREATE DATABASE zabbix OWNER zabbix;"
+        psql -c "CREATE USER zabbix WITH PASSWORD 'your_password';"
+        psql -c "GRANT ALL PRIVILEGES ON DATABASE zabbix TO zabbix;"
+        psql -c "ALTER USER zabbix CREATEDB;"
 
     - name: Import initial schema and data
       shell: |
         zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix
       become_user: zabbix
 
-    - name: Configure Zabbix server database password
+    - name: Configure Zabbix server
       lineinfile:
-        path: /etc/zabbix/zabbix_server.conf
-        regexp: '^DBPassword='
-        line: 'DBPassword=password'
-
-    - name: Configure PHP for Zabbix frontend
-      lineinfile:
-        path: /etc/zabbix/nginx.conf
-        regexp: '^# (listen|server_name)'
-        line: '\1 8080;'
-      notify:
-        - Restart Nginx
+        dest: /etc/zabbix/zabbix_server.conf
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { regexp: '^DBHost=', line: 'DBHost=localhost' }
+        - { regexp: '^DBName=', line: 'DBName=zabbix' }
+        - { regexp: '^DBUser=', line: 'DBUser=zabbix' }
+        - { regexp: '^DBPassword=', line: 'DBPassword=your_password' }
 
     - name: Start Zabbix server, agent, and Nginx
       systemd:

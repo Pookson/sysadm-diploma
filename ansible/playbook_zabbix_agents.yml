@@ -18,7 +18,17 @@
       apt:
         name: zabbix-agent
         state: present
-
+    
+    - name: Configure Zabbix agent
+      lineinfile:
+        dest: /etc/zabbix/zabbix_agentd.conf
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { regexp: '^Server=', line: 'Server=0.0.0.0/0' }
+        - { regexp: '^ServerActive=', line: '#ServerActive=' }
+        - { regexp: '^Hostname=', line: '#Hostname=Zabbix server' }
+    
     - name: Restarting zabbix-agent
       service:
         name: zabbix-agent
