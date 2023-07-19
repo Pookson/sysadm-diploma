@@ -16,40 +16,20 @@
       apt:
         update_cache: yes
       
-    - name: Install Zabbix server dependencies
+    - name: Install Zabbix server and dependencies
       apt:
         name:
           - zabbix-server-pgsql
           - php8.1-pgsql
           - zabbix-nginx-conf
           - zabbix-sql-scripts
-        state: present
-
-    - name: Install Zabbix frontend dependencies
-      apt:
-        name: zabbix-frontend-php
-        state: present
-
-    - name: Install Zabbix agent
-      apt:
-        name: zabbix-agent
-        state: present
-
-    - name: Install PostgreSQL and its client package and psycopg2 library
-      apt:
-        name:
+          - zabbix-frontend-php
+          - zabbix-agent
           - postgresql
           - postgresql-client
           - python3-psycopg2
+          - acl
         state: present
-    
-    - name: Add PostgreSQL user to sudoers
-      lineinfile:
-        dest: /etc/sudoers
-        state: present
-        line: 'postgres    ALL=(ALL:ALL) ALL'
-        validate: 'visudo -cf %s'
-        insertafter: '^# User privilege specification'
     
     - name: Add zabbix user to sudoers
       lineinfile:
@@ -59,10 +39,6 @@
         validate: 'visudo -cf %s'
         insertafter: '^# User privilege specification'        
     
-    - name: Install acl
-      apt:
-        name: acl
-        state: present    
     - name: Ensure the Ansible temp directory for psql exists with correct permissions
       file:
         path: /tmp/.ansible-postgres/tmp
@@ -119,39 +95,11 @@
       with_items:
         - { regexp: '^#        listen          8080;', line: '        listen          8080;' }        
 
-    - name: Stop Apache service
-      service:
-        name: apache2
-        state: stopped
-      ignore_errors: true
-
-    - name: Disable Apache service
-      service:
-        name: apache2
-        enabled: no
-      ignore_errors: true
-
-    - name: Remove Apache packages
-      apt:
-        name: "{{ item }}"
-        state: absent
-      with_items:
-        - apache2
-        - apache2-utils
-        - apache2-bin
-      ignore_errors: true
-
-    - name: Remove Apache configuration files
+    - name: Remove Apache start page
       file:
         path: "{{ item }}"
         state: absent
       with_items:
-        - /etc/apache2
-        - /etc/apache2.conf
-        - /etc/apache2/sites-available
-        - /etc/apache2/sites-enabled
-        - /etc/apache2/mods-available
-        - /etc/apache2/mods-enabled
         - /var/www/html/index.html
       ignore_errors: true
     

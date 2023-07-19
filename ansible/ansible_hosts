@@ -1,6 +1,15 @@
 [web_servers]
-website-vm1 ansible_host=158.160.110.225 ansible_user=user ansible_ssh_private_key_file=id_rsa
-website-vm2 ansible_host=158.160.73.24 ansible_user=user ansible_ssh_private_key_file=id_rsa
+website-vm1 ansible_host=158.160.112.113 ansible_user=user ansible_ssh_private_key_file=id_rsa
+website-vm2 ansible_host=84.252.141.13 ansible_user=user ansible_ssh_private_key_file=id_rsa
 
 [zabbix]
-zabbix-vm ansible_host=51.250.45.29 ansible_user=user ansible_ssh_private_key_file=id_rsa
+zabbix-vm ansible_host=84.201.147.57 ansible_user=user ansible_ssh_private_key_file=id_rsa
+
+[kibana]
+kibana-vm ansible_host= ansible_user=user ansible_ssh_private_key_file=id_rsa
+
+[elasticsearch]
+elasticsearch-vm ansible_host= ansible_user=user ansible_ssh_private_key_file=id_rsa
+
+[bastion]
+bastion-vm ansible_host= ansible_user=user ansible_ssh_private_key_file=id_rsa

@@ -1,6 +1,6 @@
 /*
-resource "yandex_compute_instance" "logging-elastic-vm" {
-  name = "logging-elastic"
+resource "yandex_compute_instance" "elasticsearch-vm" {
+  name = "elasticsearch-vm"
   zone = "ru-central1-c"
 
   resources {
@@ -22,13 +22,13 @@ resource "yandex_compute_instance" "logging-elastic-vm" {
   }
   
   metadata = {
-    user-data = "${file("./meta_log_elastic.yml")}"
+    user-data = "${file("./meta_log_elasticsearch.yml")}"
   }
 
 }
 
-resource "yandex_compute_instance" "logging-kibana-vm" {
-  name = "logging-kibana"
+resource "yandex_compute_instance" "kibana-vm" {
+  name = "kibana-vm"
   zone = "ru-central1-c"
 
   resources {
@@ -50,7 +50,7 @@ resource "yandex_compute_instance" "logging-kibana-vm" {
   }
   
   metadata = {
-    user-data = "${file("./meta_log_kibana.yml")}"
+    user-data = "${file("./meta_kibana.yml")}"
   }
 
 }

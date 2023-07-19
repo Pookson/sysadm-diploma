@@ -21,7 +21,7 @@ resource "yandex_compute_instance" "website-vm1" {
   }
   
   metadata = {
-    user-data = "${file("./meta.yml")}"
+    user-data = "${file("./meta_website.yml")}"
   }
 
 }
@@ -49,7 +49,7 @@ resource "yandex_compute_instance" "website-vm2" {
   }
   
   metadata = {
-    user-data = "${file("./meta.yml")}"
+    user-data = "${file("./meta_website.yml")}"
   }
 
 }
