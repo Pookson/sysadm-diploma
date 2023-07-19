@@ -1,4 +1,3 @@
-/*
 resource "yandex_compute_instance" "elasticsearch-vm" {
   name = "elasticsearch-vm"
   zone = "ru-central1-c"
@@ -54,4 +53,3 @@ resource "yandex_compute_instance" "kibana-vm" {
   }
 
 }
-*/
