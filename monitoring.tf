@@ -18,6 +18,7 @@ resource "yandex_compute_instance" "zabbix-vm" {
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet-3.id
     nat       = true
+    ip_address = "192.168.30.30"
   }
   
   metadata = {

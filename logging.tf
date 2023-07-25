@@ -16,12 +16,13 @@ resource "yandex_compute_instance" "elasticsearch-vm" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-2.id
+    subnet_id = yandex_vpc_subnet.subnet-3.id
     nat       = true
+    ip_address = "192.168.30.10"
   }
   
   metadata = {
-    user-data = "${file("./meta_log_elasticsearch.yml")}"
+    user-data = "${file("./meta_elasticsearch.yml")}"
   }
 
 }
@@ -44,8 +45,9 @@ resource "yandex_compute_instance" "kibana-vm" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-2.id
+    subnet_id = yandex_vpc_subnet.subnet-3.id
     nat       = true
+    ip_address = "192.168.30.20"
   }
   
   metadata = {
@@ -53,3 +55,4 @@ resource "yandex_compute_instance" "kibana-vm" {
   }
 
 }
+

@@ -1,0 +1,127 @@
+---
+- name: Install Docker and Filebeat
+  hosts: web_servers
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - ca-certificates
+        - curl
+        - gnupg
+        - python3-docker
+
+    - name: Create directory for keyrings
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download apt key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.gpg
+
+    - name: Add a key from a file
+      ansible.builtin.apt_key:
+        file: /etc/apt/keyrings/docker.gpg
+        state: present
+
+    - name: Add Docker APT repository
+      apt_repository:
+        filename: docker.list
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+        state: present
+
+    - name: Update apt cache again
+      apt:
+        update_cache: yes
+    
+    - name: Install Docker
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+
+    - name: Starting Docker service
+      service:
+        name: docker
+        state: restarted
+        enabled: yes
+
+    - name: Pull Filebeat Docker image
+      docker_image:
+        name: elastic/filebeat:7.17.9
+      become: yes
+
+    - name: Create Filebeat configuration directory
+      file:
+        path: /etc/filebeat/config
+        state: directory
+        mode: '0755'
+      become: yes
+    
+    - name: Set read permission for Nginx log files
+      file:
+        path: /var/log/nginx
+        state: directory
+        recurse: yes
+        mode: "o+r"
+      become: yes
+
+    - name: Copy Filebeat configuration file
+      copy:
+        content: |
+          filebeat.config:
+            modules:
+              path: ${path.config}/modules.d/*.yml
+              reload.enabled: false
+          filebeat.inputs:
+            - type: log
+              enabled: true
+              paths:
+                - /var/log/nginx/access.log
+                - /var/log/nginx/error.log
+          processors:
+            - decode_json_fields:
+                fields: ["message"]
+                target: "json"
+                overwrite_keys: true
+          setup.kibana.host: "http://192.168.30.20:5601"
+          output.elasticsearch:
+            hosts: '${ELASTICSEARCH_HOSTS:http://192.168.30.10:9200}'
+            indices:
+              - index: "filebeat-%{+yyyy.MM.dd}"
+        dest: /etc/filebeat/config/filebeat.yml
+        mode: '0644'
+      become: yes
+
+    - name: Create Docker Bridge Network
+      docker_network:
+        name: my_network
+        driver: bridge
+
+    - name: Run Filebeat Docker container
+      docker_container:
+        name: filebeat
+        image: elastic/filebeat:7.17.9
+        volumes:
+          - /etc/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+          - /var/log/nginx/access.log:/var/log/nginx/access.log:ro
+          - /var/log/nginx/error.log:/var/log/nginx/error.log:ro
+        network_mode: my_network
+        restart_policy: unless-stopped
+        state: started
+      become: yes

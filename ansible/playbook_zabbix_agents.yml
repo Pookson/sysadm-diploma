@@ -1,5 +1,5 @@
 - name: Zabbix Agent Installation
-  hosts: web_servers #, kibana, elasticsearch, bastion
+  hosts: web_servers, kibana, elasticsearch #, bastion
   become: yes
   tasks:
     - name: Downloading zabbix-release pkg
