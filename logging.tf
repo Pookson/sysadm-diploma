@@ -4,8 +4,8 @@ resource "yandex_compute_instance" "elasticsearch-vm" {
 
   resources {
     core_fraction = 20
-    cores  = 4
-    memory = 8
+    cores  = 2
+    memory = 4
   }
 
   boot_disk {

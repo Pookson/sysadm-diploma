@@ -1,11 +1,15 @@
-/*
-resource "yandex_compute_snapshot" "website-vm1-snap" {
-  name = "website-vm1-snap"
-  source_disk_id = "${yandex_compute_instance.website-vm1.boot_disk[0].disk_id}"
-}
+resource "yandex_compute_snapshot_schedule" "backup" {
+  schedule_policy {
+	expression = "30 23 ? * *"
+  }
 
-resource "yandex_compute_snapshot" "website-vm2-snap" {
-  name = "website-vm2-snap"
-  source_disk_id = "${yandex_compute_instance.website-vm2.boot_disk[0].disk_id}"
+  snapshot_count = 1
+
+  retention_period = "168h"
+
+  snapshot_spec {
+	  description = "daily snapshot"
+  }
+
+  disk_ids = ["${yandex_compute_instance.website-vm1.boot_disk[0].disk_id}", "${yandex_compute_instance.website-vm2.boot_disk[0].disk_id}", "${yandex_compute_instance.zabbix-vm.boot_disk[0].disk_id}", "${yandex_compute_instance.elasticsearch-vm.boot_disk[0].disk_id}", "${yandex_compute_instance.kibana-vm.boot_disk[0].disk_id}", "${yandex_compute_instance.bastion-vm.boot_disk[0].disk_id}"]
 }
-*/

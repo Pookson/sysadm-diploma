@@ -1,11 +1,10 @@
-/*
 resource "yandex_compute_instance" "bastion-vm" {
   name = "bastion-vm"
   zone = "ru-central1-c"
 
   resources {
     core_fraction = 20
-    cores  = 4
+    cores  = 2
     memory = 4
   }
 
@@ -17,8 +16,9 @@ resource "yandex_compute_instance" "bastion-vm" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-2.id
+    subnet_id = yandex_vpc_subnet.subnet-3.id
     nat       = true
+    ip_address = "192.168.30.99"
   }
   
   metadata = {
@@ -26,7 +26,7 @@ resource "yandex_compute_instance" "bastion-vm" {
   }
 
 }
-*/
+
 
 resource "yandex_vpc_network" "network-1" {
   name = "network-1"
