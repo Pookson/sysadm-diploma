@@ -16,8 +16,7 @@ resource "yandex_compute_instance" "website-vm1" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-1.id
-    nat       = true
+    subnet_id = yandex_vpc_subnet.subnet-1-internal.id
     ip_address = "192.168.10.10"
   }
   
@@ -45,8 +44,7 @@ resource "yandex_compute_instance" "website-vm2" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-2.id
-    nat       = true
+    subnet_id = yandex_vpc_subnet.subnet-2-internal.id
     ip_address = "192.168.20.10"
   }
   

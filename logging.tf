@@ -1,6 +1,6 @@
 resource "yandex_compute_instance" "elasticsearch-vm" {
   name = "elasticsearch-vm"
-  zone = "ru-central1-c"
+  zone = "ru-central1-a"
 
   resources {
     core_fraction = 20
@@ -16,9 +16,8 @@ resource "yandex_compute_instance" "elasticsearch-vm" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-3.id
-    nat       = true
-    ip_address = "192.168.30.10"
+    subnet_id = yandex_vpc_subnet.subnet-1-internal.id
+    ip_address = "192.168.10.100"
   }
   
   metadata = {
@@ -45,9 +44,9 @@ resource "yandex_compute_instance" "kibana-vm" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-3.id
+    subnet_id = yandex_vpc_subnet.subnet-3-external.id
     nat       = true
-    ip_address = "192.168.30.20"
+    ip_address = "192.168.30.10"
   }
   
   metadata = {

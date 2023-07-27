@@ -95,15 +95,16 @@
                 - /var/log/nginx/access.log
                 - /var/log/nginx/error.log
           processors:
+            - add_host_metadata:
             - decode_json_fields:
                 fields: ["message"]
                 target: "json"
                 overwrite_keys: true
-          setup.kibana.host: "http://192.168.30.20:5601"
+          setup.kibana.host: "http://192.168.30.10:5601"
           output.elasticsearch:
-            hosts: '${ELASTICSEARCH_HOSTS:http://192.168.30.10:9200}'
+            hosts: '${ELASTICSEARCH_HOSTS:http://192.168.10.100:9200}'
             indices:
-              - index: "filebeat-%{+yyyy.MM.dd}"
+              - index: "filebeat-%{+yyyy.MM.dd}-%{[host.name]}"
         dest: /etc/filebeat/config/filebeat.yml
         mode: '0644'
       become: yes

@@ -16,11 +16,13 @@ resource "yandex_compute_instance" "bastion-vm" {
   }
 
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-3.id
+    subnet_id = yandex_vpc_subnet.subnet-3-external.id
     nat       = true
-    ip_address = "192.168.30.99"
+    nat_ip_address = "51.250.43.134"
+    ip_address = "192.168.30.254"
+    security_group_ids = ["${yandex_vpc_security_group.bastion-external-sg.id}", "${yandex_vpc_security_group.bastion-internal-sg.id}"]
   }
-  
+ 
   metadata = {
     user-data = "${file("./meta_bastion.yml")}"
   }
@@ -32,37 +34,54 @@ resource "yandex_vpc_network" "network-1" {
   name = "network-1"
 }
 
-resource "yandex_vpc_subnet" "subnet-1" {
-  name           = "subnet-1"
+resource "yandex_vpc_subnet" "subnet-1-internal" {
+  name           = "subnet-1-internal"
   zone           = "ru-central1-a"
   network_id     = "${yandex_vpc_network.network-1.id}"
   v4_cidr_blocks = ["192.168.10.0/24"]
+  route_table_id = "${yandex_vpc_route_table.route-table.id}"
 }
 
-resource "yandex_vpc_subnet" "subnet-2" {
-  name           = "subnet-2"
+resource "yandex_vpc_subnet" "subnet-2-internal" {
+  name           = "subnet-2-internal"
   zone           = "ru-central1-b"
   network_id     = "${yandex_vpc_network.network-1.id}"
   v4_cidr_blocks = ["192.168.20.0/24"]
+  route_table_id = "${yandex_vpc_route_table.route-table.id}"
 }
 
-resource "yandex_vpc_subnet" "subnet-3" {
-  name           = "subnet-3"
+resource "yandex_vpc_subnet" "subnet-3-external" {
+  name           = "subnet-3-external"
   zone           = "ru-central1-c"
   network_id     = "${yandex_vpc_network.network-1.id}"
   v4_cidr_blocks = ["192.168.30.0/24"]
+}
+
+resource "yandex_vpc_gateway" "nat-gateway" {
+  name = "nat-gateway"
+  shared_egress_gateway {}
+}
+
+resource "yandex_vpc_route_table" "route-table" {
+  name       = "route-table"
+  network_id = "${yandex_vpc_network.network-1.id}"
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    gateway_id         = "${yandex_vpc_gateway.nat-gateway.id}"
+  }
 }
 
 resource "yandex_alb_target_group" "target-group" {
   name           = "target-group"
 
   target {
-    subnet_id    = "${yandex_vpc_subnet.subnet-1.id}"
+    subnet_id    = "${yandex_vpc_subnet.subnet-1-internal.id}"
     ip_address   = "${yandex_compute_instance.website-vm1.network_interface.0.ip_address}"
   }
 
   target {
-    subnet_id    = "${yandex_vpc_subnet.subnet-2.id}"
+    subnet_id    = "${yandex_vpc_subnet.subnet-2-internal.id}"
     ip_address   = "${yandex_compute_instance.website-vm2.network_interface.0.ip_address}"
   }
 
@@ -124,10 +143,12 @@ resource "yandex_alb_load_balancer" "load-balancer" {
 
   network_id  = "${yandex_vpc_network.network-1.id}"
 
+  #security_group_ids = ["${yandex_vpc_security_group.security-group.id}"]
+
   allocation_policy {
     location {
-      zone_id   = "ru-central1-a"
-      subnet_id = yandex_vpc_subnet.subnet-1.id 
+      zone_id   = "ru-central1-c"
+      subnet_id = yandex_vpc_subnet.subnet-3-external.id 
     }
   }
 
@@ -147,5 +168,37 @@ resource "yandex_alb_load_balancer" "load-balancer" {
     }
   }
 }  
+
+resource "yandex_vpc_security_group" "bastion-external-sg" {
+  name        = "bastion-external-sg"
+  network_id  = "${yandex_vpc_network.network-1.id}"
+  
+  ingress {
+    protocol       = "TCP"
+    description    = "connetctions from internet to bastion host"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 22
+  }
+}
+
+resource "yandex_vpc_security_group" "bastion-internal-sg" {
+  name        = "bastion-internal-sg"
+  network_id  = "${yandex_vpc_network.network-1.id}"
+  
+  ingress {
+    protocol       = "TCP"
+    description    = "internal connetctions to bastion host"
+    v4_cidr_blocks = ["192.168.30.254/32"]
+    port           = 22
+  }
+
+  egress {
+    protocol       = "TCP"
+    description    = "bastion connections to internal hosts"
+    #predefined_target = "self_security_group"
+    v4_cidr_blocks = ["192.168.10.10/32", "192.168.10.100/32", "192.168.20.10/32", "192.168.30.10/32", "192.168.30.10/32"]
+    port           = 22
+  }
+}
 
 
