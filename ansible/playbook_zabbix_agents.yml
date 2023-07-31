@@ -1,5 +1,5 @@
 - name: Zabbix Agent Installation
-  hosts: web_servers #, kibana, elasticsearch, bastion
+  hosts: web_servers, kibana, elasticsearch, bastion
   become: yes
   tasks:
     - name: Downloading zabbix-release pkg
@@ -25,7 +25,7 @@
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
       with_items:
-        - { regexp: '^Server=', line: 'Server=0.0.0.0/0' }
+        - { regexp: '^Server=', line: 'Server=192.168.30.20' }
         - { regexp: '^ServerActive=', line: '#ServerActive=' }
         - { regexp: '^Hostname=', line: '#Hostname=Zabbix server' }
     

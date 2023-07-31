@@ -1,15 +1,15 @@
 [web_servers]
-website-vm1 ansible_host=192.168.10.10 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.43.134"'
-website-vm2 ansible_host=192.168.20.10 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.43.134"'
+website-vm1 ansible_host=192.168.10.10 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.37.86"'
+website-vm2 ansible_host=192.168.20.10 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.37.86"'
 
 [zabbix]
-zabbix-vm ansible_host=192.168.30.20 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.43.134"'
+zabbix-vm ansible_host=192.168.30.20 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.37.86"'
 
 [kibana]
-kibana-vm ansible_host=192.168.30.10 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.43.134"'
+kibana-vm ansible_host=192.168.30.10 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.37.86"'
 
 [elasticsearch]
-elasticsearch-vm ansible_host=192.168.10.100 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.43.134"'
+elasticsearch-vm ansible_host=192.168.10.100 ansible_user=user ansible_ssh_private_key_file=id_rsa ansible_ssh_common_args='-o ProxyCommand="ssh -i id_rsa -W %h:%p -q user@51.250.37.86"'
 
 [bastion]
-bastion-vm ansible_host=51.250.43.134 ansible_user=user ansible_ssh_private_key_file=id_rsa
+bastion-vm ansible_host=51.250.37.86 ansible_user=user ansible_ssh_private_key_file=id_rsa

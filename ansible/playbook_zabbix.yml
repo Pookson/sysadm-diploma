@@ -29,7 +29,14 @@
           - postgresql-client
           - python3-psycopg2
           - acl
+          - python3-pip
         state: present
+
+    - name: Install zabbix-api Python package
+      pip:
+        name: zabbix-api
+        state: present
+        executable: pip3        
     
     - name: Add zabbix user to sudoers
       lineinfile:
@@ -118,3 +125,29 @@
         - zabbix-agent
         - nginx
         - php8.1-fpm
+
+    - name: Add new host to Zabbix server
+      zabbix_host:
+        server_url: http://192.168.30.20:8080
+        login_user: Admin
+        login_password: zabbix
+        host_name: "{{ item.host_name }}"
+        host_groups:
+          - Linux servers
+        link_templates:
+          - Linux by Zabbix agent
+        status: enabled
+        state: present
+        interfaces:
+          - type: 1
+            main: 1
+            useip: 1
+            ip: "{{ item.ip }}"
+            dns: ""
+            port: "10050"
+      with_items:
+        - { host_name: 'Webserver-1', ip: '192.168.10.10' }
+        - { host_name: 'Webserver-2', ip: '192.168.20.10' }
+        - { host_name: 'Elasticsearch', ip: '192.168.10.100' }
+        - { host_name: 'Kibana', ip: '192.168.30.10' }
+        - { host_name: 'Bastion', ip: '192.168.30.254' }        
