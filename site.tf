@@ -18,6 +18,7 @@ resource "yandex_compute_instance" "website-vm1" {
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet-1-internal.id
     ip_address = "192.168.10.10"
+    security_group_ids = ["${yandex_vpc_security_group.webserver-sg.id}"]
   }
   
   metadata = {
@@ -46,6 +47,7 @@ resource "yandex_compute_instance" "website-vm2" {
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet-2-internal.id
     ip_address = "192.168.20.10"
+    security_group_ids = ["${yandex_vpc_security_group.webserver-sg.id}"]
   }
   
   metadata = {

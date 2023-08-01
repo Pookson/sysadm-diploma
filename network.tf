@@ -20,7 +20,7 @@ resource "yandex_compute_instance" "bastion-vm" {
     nat       = true
     nat_ip_address = "51.250.37.86"
     ip_address = "192.168.30.254"
-    security_group_ids = ["${yandex_vpc_security_group.bastion-external-sg.id}", "${yandex_vpc_security_group.bastion-internal-sg.id}"]
+    security_group_ids = ["${yandex_vpc_security_group.bastion-sg.id}"]
   }
  
   metadata = {
@@ -168,43 +168,3 @@ resource "yandex_alb_load_balancer" "load-balancer" {
     }
   }
 }  
-
-resource "yandex_vpc_security_group" "bastion-external-sg" {
-  name        = "bastion-external-sg"
-  network_id  = "${yandex_vpc_network.network-1.id}"
-  
-  ingress {
-    protocol       = "TCP"
-    description    = "connetctions from internet to bastion host"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port           = 22
-  }
-
-    egress {
-    protocol       = "TCP"
-    description    = "connetctions from bastion to internet"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port           = 80
-  }
-}
-
-resource "yandex_vpc_security_group" "bastion-internal-sg" {
-  name        = "bastion-internal-sg"
-  network_id  = "${yandex_vpc_network.network-1.id}"
-  
-  ingress {
-    protocol       = "TCP"
-    description    = "internal connetctions to bastion host"
-    v4_cidr_blocks = ["192.168.30.254/32"]
-    port           = 22
-  }
-
-  egress {
-    protocol       = "TCP"
-    description    = "bastion connections to internal hosts"
-    v4_cidr_blocks = ["192.168.10.10/32", "192.168.10.100/32", "192.168.20.10/32", "192.168.30.10/32", "192.168.30.20/32"]
-    port           = 22
-  }
-}
-
-

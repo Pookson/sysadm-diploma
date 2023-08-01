@@ -19,6 +19,7 @@ resource "yandex_compute_instance" "zabbix-vm" {
     subnet_id = yandex_vpc_subnet.subnet-3-external.id
     nat       = true
     ip_address = "192.168.30.20"
+    security_group_ids = ["${yandex_vpc_security_group.zabbix-sg.id}"]
   }
   
   metadata = {
