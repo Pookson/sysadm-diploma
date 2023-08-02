@@ -1,0 +1,16 @@
+#cloud-config
+disable_root: true
+timezone: Europe/Moscow
+repo_update: true
+repo_upgrade: true
+apt:
+preserve_sources_list: true
+update_packages: true
+upgrade: true
+users:
+ - name: user
+   groups: sudo
+   shell: /bin/bash
+   sudo: ['ALL=(ALL) NOPASSWD:ALL']
+   ssh-authorized-keys:
+     - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDOmy7I06iQWkPMRLwmzXvUE+thmrYMII32rLRoyeGCysSXIEW5SSojhqbZXK611ULKN/ICKRBrZywVz7Rmqdra3S1fqkMxAm9ZEcbJjghKlGgQyjETn6TpX1N3achVUFiRJtrjL1kf+tBEW9diJo0Sc2TTU6ATt/ykrKuM47Nb6PNYtbPXUs5fmiTtVBCVPMZe+dD2DEDyBnKf+tC09JcAh4yhU6bdE0WvYZ+Uha29Bo4LNAcwJ8DDWeA1VqtUQ+ywFtjskIW2r9swlcaUNQRI0vELWMK6wDcgIO81P4HGZPEQMSx6AU94HcXpNxYODh8FS2vx19ESsMwA1YLM3ibmrSL5RctgHAobpvV9SkzxdndSLTpJy/VjZR6or+e+X/FNPDxjFVbC7+tLY2XBEmeCkvgsOHfpXxMKq9PbS2RVVQN8qIQzx3WyumKxhfOT/gSMz9DokFLRm+JuI6c+tIb8PMZcEJERiNk1nJubOJSXh835K2sVc3va1/eYz9sJt5E= statsenko@statsenko-virtual-machine
