@@ -102,15 +102,7 @@
       with_items:
         - { regexp: '^#        listen          8080;', line: '        listen          8080;' }        
 
-    - name: Remove Apache start page
-      file:
-        path: "{{ item }}"
-        state: absent
-      with_items:
-        - /var/www/html/index.html
-      ignore_errors: true
-    
-    - name: Copy Zabbix configuration template
+   - name: Copy Zabbix configuration template
       template:
         src: zabbix.conf.php.j2
         dest: /etc/zabbix/web/zabbix.conf.php
@@ -126,7 +118,7 @@
         - nginx
         - php8.1-fpm
 
-    - name: Add new host to Zabbix server
+    - name: Add hosts to Zabbix server
       zabbix_host:
         server_url: http://192.168.30.20:8080
         login_user: Admin

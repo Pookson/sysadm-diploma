@@ -81,3 +81,17 @@
         published_ports: '5601:5601'
         env:
           ELASTICSEARCH_HOSTS: http://192.168.10.100:9200
+          ELASTICSEARCH_USERNAME: "elastic"
+          ELASTICSEARCH_PASSWORD: "mypassword"
+    
+    - name: Pause for 90 seconds
+      pause:
+        seconds: 90
+
+    - name: Create index pattern
+      command: >-
+        curl -XPOST -D- 'http://192.168.30.10:5601/api/saved_objects/index-pattern'
+        -H 'Content-Type: application/json'
+        -H 'kbn-version: 7.17.9'
+        -u elastic:mypassword
+        -d '{"attributes":{"title":"filebeat-*","timeFieldName":"@timestamp"}}'   

@@ -103,6 +103,8 @@
           setup.kibana.host: "http://192.168.30.10:5601"
           output.elasticsearch:
             hosts: '${ELASTICSEARCH_HOSTS:http://192.168.10.100:9200}'
+            username: '${ELASTICSEARCH_USERNAME:elastic}'
+            password: '${ELASTICSEARCH_PASSWORD:mypassword}'
             indices:
               - index: "filebeat-%{+yyyy.MM.dd}-%{[host.name]}"
         dest: /etc/filebeat/config/filebeat.yml

@@ -143,8 +143,6 @@ resource "yandex_alb_load_balancer" "load-balancer" {
 
   network_id  = "${yandex_vpc_network.network-1.id}"
 
-  #security_group_ids = ["${yandex_vpc_security_group.security-group.id}"]
-
   allocation_policy {
     location {
       zone_id   = "ru-central1-c"

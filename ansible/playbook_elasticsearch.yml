@@ -83,3 +83,8 @@
            - "9300:9300"
         env:
           discovery.type: single-node
+          xpack.security.enabled: "true"
+          xpack.license.self_generated.type: basic
+          ELASTIC_USERNAME: "elastic"
+          ELASTIC_PASSWORD: "mypassword"
+          xpack.security.authc.realms.native.native1.order: "0"
