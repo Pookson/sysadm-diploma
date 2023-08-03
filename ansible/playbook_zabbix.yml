@@ -102,7 +102,7 @@
       with_items:
         - { regexp: '^#        listen          8080;', line: '        listen          8080;' }        
 
-   - name: Copy Zabbix configuration template
+    - name: Copy Zabbix configuration template
       template:
         src: zabbix.conf.php.j2
         dest: /etc/zabbix/web/zabbix.conf.php
