@@ -2,6 +2,8 @@
 - name: Install Docker and Kibana
   hosts: kibana
   become: yes
+  vars_files:
+    - vars.yml
 
   tasks:
     - name: Update apt cache
@@ -80,9 +82,9 @@
         network_mode: my_network
         published_ports: '5601:5601'
         env:
-          ELASTICSEARCH_HOSTS: http://192.168.10.100:9200
-          ELASTICSEARCH_USERNAME: "elastic"
-          ELASTICSEARCH_PASSWORD: "mypassword"
+          ELASTICSEARCH_HOSTS: http://{{ elasticsearch_vm_ip }}:9200
+          ELASTICSEARCH_USERNAME: "{{ ELASTIC_USERNAME }}"
+          ELASTICSEARCH_PASSWORD: "{{ ELASTIC_PASSWORD }}"
     
     - name: Pause for 90 seconds
       pause:

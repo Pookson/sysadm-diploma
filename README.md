@@ -5,8 +5,8 @@
 | VM-name | External IP|Internal IP| Login | Password |
 |----------|----------|----------|----------|----------|
 | bastion-vm   | 51.250.37.86 (static)|192.168.30.254|shh only    |ssh only     |
-| zabbix-vm    | 51.250.40.148:8080    | 192.168.30.20|Admin    | zabbix    |
-| kibana-vm    | 51.250.33.40:5601    | 192.168.30.10|elastic   | mypassword    |
+| zabbix-vm    | 51.250.41.183:8080    | 192.168.30.20|Admin    | zabbix    |
+| kibana-vm    | 51.250.35.60:5601    | 192.168.30.10|elastic   | mypassword    |
 |elasticsearch-vm|-|196.168.10.100|elastic|mypassword
 |website-vm1|-|196.168.10.10|-|-|
 |website-vm2|-|196.168.20.10|-|-|

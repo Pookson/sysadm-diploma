@@ -1,0 +1,9 @@
+website_vm1_ip: 192.168.10.10 
+website_vm2_ip: 192.168.20.10 
+zabbix_vm_ip: 192.168.30.20
+kibana_vm_ip: 192.168.30.10
+elasticsearch_vm_ip: 192.168.10.100 
+bastion_vm_ip: 192.168.30.254
+ELASTIC_USERNAME: "elastic"
+ELASTIC_PASSWORD: "mypassword"
+zabbix_db_password: "your_password"

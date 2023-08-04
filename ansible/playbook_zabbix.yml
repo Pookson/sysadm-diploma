@@ -3,6 +3,8 @@
   hosts: zabbix
   become: true
   become_method: sudo
+  vars_files:
+    - vars.yml
   tasks:
     - name: Downloading zabbix-release pkg
       get_url:
@@ -138,8 +140,8 @@
             dns: ""
             port: "10050"
       with_items:
-        - { host_name: 'Webserver-1', ip: '192.168.10.10' }
-        - { host_name: 'Webserver-2', ip: '192.168.20.10' }
-        - { host_name: 'Elasticsearch', ip: '192.168.10.100' }
-        - { host_name: 'Kibana', ip: '192.168.30.10' }
-        - { host_name: 'Bastion', ip: '192.168.30.254' }        
+        - { host_name: 'Webserver-1', ip: "{{website_vm1_ip}}" }
+        - { host_name: 'Webserver-2', ip: "{{website_vm2_ip}}" }
+        - { host_name: 'Elasticsearch', ip: "{{elasticsearch_vm_ip}}" }
+        - { host_name: 'Kibana', ip: "{{kibana_vm_ip}}" }
+        - { host_name: 'Bastion', ip: "{{bastion_vm_ip}}" }        

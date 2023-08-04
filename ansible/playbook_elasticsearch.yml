@@ -2,6 +2,8 @@
 - name: Install Docker and Elasticsearch
   hosts: elasticsearch
   become: yes
+  vars_files:
+    - vars.yml
 
   tasks:
     - name: Update apt cache
@@ -85,6 +87,6 @@
           discovery.type: single-node
           xpack.security.enabled: "true"
           xpack.license.self_generated.type: basic
-          ELASTIC_USERNAME: "elastic"
-          ELASTIC_PASSWORD: "mypassword"
+          ELASTIC_USERNAME: "{{ ELASTIC_USERNAME }}"
+          ELASTIC_PASSWORD: "{{ ELASTIC_PASSWORD }}"
           xpack.security.authc.realms.native.native1.order: "0"
